@@ -1,0 +1,226 @@
+﻿
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1" runat="server">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width,height=device-height,inital-scale=1.0,maximum-scale=1.0,user-scalable=no;" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>参与游戏</title>
+    <link href="Css/mobilemain.css?v=20200424" rel="stylesheet" />
+    <script src="JS/jquery.js"></script>
+    <script src="JS/web3.min.js"></script>
+    <script src="JS/public.js"></script>
+    <script src="JS/Game.js"></script>
+    <script type="text/javascript">
+        function copyUrl2() {
+            var Url2 = document.getElementById("account").innerText;
+            var oInput = document.createElement('input');
+            oInput.value = Url2;
+            document.body.appendChild(oInput);
+            oInput.select(); // 选择对象
+            document.execCommand("Copy"); // 执行浏览器复制命令
+            oInput.className = 'oInput';
+            oInput.style.display = 'none';
+            alert('复制成功');
+        }
+    </script>
+</head>
+<body style="background-color: #f4f4f4;">
+
+    <div class="wrap">
+        <div class="main">
+            <div class="game_bg">
+                <div class="game_titlepic">
+                    <span><a href="index.html">
+                        <img src="images/jt_left.png" height="20px" /></a></span>参与游戏
+                    <div class="xd_name"><a href="TouPiao.html">投票</a></div>
+                </div>
+
+                <div class="game_titlelej">
+                    <div class="ljtz_left">
+                        <div class="title">累计投注</div>
+                        <div class="title1"><span id="ljtz">0.00</span></div>
+                    </div>
+                    <div class="ljtz_right">
+                        <div class="title">累计返还</div>
+                        <div class="title1"><span class="title" id="ljfh" cols="20">0.00</span><div class="clear"></div>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                    <div class="now_jl">当前第<font id="num"></font>期</div>
+                </div>
+            </div>
+            <div class="game_bgsecond">
+                <div class="ES_hyleft">
+                    <label>账户余额：</label>
+                    <input type="text" readonly="true" id="tbxyue" value="0.00" class="gamebotton_acc">
+                </div>
+
+                <div class="ES_hyright">
+                    <label>当前游戏金额：</label>
+                    <input type="text" readonly="true" id="tbxprice" value="0.00" class="gamebotton_acc">
+                </div>
+                <div class="clear"></div>
+            </div>
+
+            <div class="game_bgthird">
+                <div class="ES_hyleft">
+                    当前流水号：<span class="title" id="spanlsh" cols="20">0.00</span>
+                </div>
+                <div class="ES_hyright">
+                    排序：<span class="title" id="soanorder" cols="20">0.00</span>
+                </div>
+                <div class="clear"></div>
+                <div class="ES_hybottom">
+                    账号：<span class="title" id="account" cols="20"></span>
+                    <input type="button" class="botton_title_name" onclick="copyUrl2()" value="点击复制代码" />
+                </div>
+            </div>
+
+            <div class="es_hybox1">
+                <div class="ES_hytitle3">
+                    <label>参  与  倍  数：</label>
+                    <input type="text" id="tbxbs" value="1" class="botton_acc1">
+                </div>
+
+                <div class="ES_hytitle3">
+                    <label>燃料单价(GWei)</label>
+                    <select id="gasPrice" class="botton_acc1">
+                        <option value="6">6</option>
+                        <option value="11">11</option>
+                        <option value="21">21</option>
+                    </select>
+                </div>
+                <div style="margin: auto; text-align: center; margin: 15px 0px;">
+                    <button onclick="joinon()" style="border: none; background: none; border-radius: 5px; width: 80%; margin: auto; color: #fff; text-align: center; background-color: #2886cf; height: 35px; line-height: 35px;">发送</button>
+                </div>
+                <h2 id="info"></h2>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        
+        window.addEventListener('load', function () {
+
+
+            web3.eth.getAccounts(function (err, accounts) {
+                if (accounts.length == 0) {
+                    $("#account").html("请解锁！");
+                } else {
+                    $("#account").html(accounts[0]);
+                    var currentAccount = accounts[0];
+                    var eschToken = web3.eth.contract(eschabi).at(eschaddress);
+                    var gameToken = web3.eth.contract(gameabi).at(address);
+                   
+                    eschToken.balanceOf(currentAccount, function (err, res) {
+                        console.log(res);
+                        console.log(res.c);
+                        let ret = new BigNumber(res);
+                        console.log(parseFloat(ret.dividedBy(Ether)).toFixed(2));
+                        $("#tbxyue").val(parseFloat(ret.dividedBy(Ether)).toFixed(2));
+                    })
+
+                    //查询当前额度
+                    gameToken.cest01(function (err, res) {
+                        if(!err) {
+                            console.log(res);
+                            let ret = new BigNumber(res);
+                            $("#tbxprice").val(parseFloat(ret.dividedBy(Ether)).toFixed(2))
+                        } else {
+                            console.log(err);
+                        }
+                    });
+                    //当前期数
+                    gameToken.cnow(function (err, res) {
+                        if (!err) {
+                            $("#num").html(res[0].c);
+                            $("#soanorder").html(res[1].c);
+                            $("#spanlsh").html(res[2].c);
+                            console.log("cnow", res);
+                        } else {
+                            console.log(err);
+                        }
+                    })
+                    //累计投注
+                    gameToken.cself(function (err, res) {
+                        if(!err) {
+                            let rettz = new BigNumber(res[0]);
+                            let retfh = new BigNumber(res[1]);
+                            $("#ljtz").html(rettz.dividedBy(Ether).toFixed(2));
+                            $("#ljfh").html(retfh.dividedBy(Ether).toFixed(2));
+                            console.log("cself",res);
+                        } else {
+                            console.log(err);
+                        }})
+                 
+                }
+
+            });
+            
+        });
+        function joinon()
+        {
+            var AthenaToken = web3.eth.contract(eschabi).at(eschaddress);
+            var gameToken = web3.eth.contract(gameabi).at(address);
+            AthenaToken.balanceOf(web3.eth.accounts[0], function (err, res) {
+                console.log(res);
+                console.log(res.c);
+                let ret = new BigNumber(res);
+                console.log(parseFloat(ret.dividedBy(Ether)).toFixed(2));
+                var balance=parseFloat(ret.dividedBy(Ether));
+                gameToken.cest01(function (err, res) {
+                    if(!err) {
+                        console.log(res);
+                        let ret = new BigNumber(res);
+                        var je= parseFloat(ret.dividedBy(Ether));
+                        var bs = $("#tbxbs").val();
+                        if(!/^\d+$/.test(bs))
+                        {
+                            alert("请填写整数倍数");
+                            return;
+                        }
+                        var gas = 2500000;
+                        var gasPrice = $('#gasPrice').val();
+                        gasPrice = gasPrice * 1000000000
+                        if(balance<parseFloat(je*bs))
+                        {
+                            alert("余额不足");
+                            return;
+                        }else
+                        {
+                            gameToken.join.sendTransaction(web3.toWei(parseInt(je*bs), 'ether'),{ 
+                                //value: web3.toWei(0, 'ether'), 
+                                gas: gas, 
+                                gasPrice: gasPrice,
+                                from: web3.eth.accounts[0] 
+                            }, function (err, res) {
+                                if(!err) {
+                                    alert("发送成功");
+                                    console.log("发送成功！等待区块确认... ");
+                                } else {
+                                    alert("用户已取消");
+                                    console.log(err);
+                                }
+                            });
+                        }
+                    } else {
+                        console.log(err);
+                    }
+                });
+                
+                
+               
+
+            })
+        }
+    </script>
+    <script src="JS/FT_zh.js"></script>
+</body>
+</html>
+
+

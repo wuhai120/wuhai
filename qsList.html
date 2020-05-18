@@ -1,0 +1,111 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width,height=device-height,inital-scale=1.0,maximum-scale=1.0,user-scalable=no;" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>游戏投注</title>
+    <link href="Css/mobilemain.css?v=2020" rel="stylesheet" />
+    <script src="JS/jquery.js"></script>
+    <script src="JS/web3.min.js"></script>
+    <script src="JS/public.js"></script>
+    <script src="JS/Game.js"></script>
+    <script>
+
+        window.addEventListener('load', function () {
+
+
+            web3.eth.getAccounts(function (err, accounts) {
+                if (accounts.length == 0) {
+                    $("#account").html("请解锁！");
+                } else {
+                    $("#account").html(accounts[0]);
+                    var currentAccount = accounts[0];
+                    var AthenaToken = web3.eth.contract(eschabi).at(eschaddress);
+                    var gameToken = web3.eth.contract(gameabi).at(address);
+
+
+
+                    //查询当前奖期{当前奖期，当前排位，当前后台业务流水号}
+                    gameToken.cnow(function (err, res) {
+                        if (!err) {
+
+                            console.log("cnow", res);
+                            for (var i = res[0].c; i >= 0; i--) {
+                                var html = "";
+
+                                html += "";
+                                html += "<div class=\"contract_pic\" onclick=\"picclick(" + i + ")\"  id=\"box1-right\">";
+                                html += "<div class=\"new_pic\"><img src=\"images/new_pro.png\" height=\"35px\"/></div>";
+                                html += "<div class=\"title1\">第" + i + "期</div>";
+
+                                html += "<div class=\"clear\"></div>";
+                                html += "</div>";
+
+                                $(".contract_box").append(html);
+                            }
+                        } else {
+                            console.log(err);
+                        }
+                    })
+
+
+                }
+
+            });
+
+        });
+        function picclick(obj) {
+            location.href = "GameList.html?qs=" + obj;
+        }
+    </script>
+</head>
+<body style="background-color: #f2f2f2;">
+    
+        <div class="wrap">
+            <div class="main">
+                <div class="staus_name">
+                    <span><a href="/index.html">
+                        <img src="images/jt_left.png" height="20px" /></a></span>历史期数
+                </div>
+                
+                
+                <div class="contract_box">
+                   
+                   
+                   
+                            
+                   
+                    <script type="text/javascript" src="js/startScore.js"></script>
+                    <script>
+                        scoreFun($("#startone"))
+                        scoreFun($("#starttwo"), {
+                            fen_d: 22,//每一个a的宽度
+                            ScoreGrade: 4//a的个数 10或者
+                        })
+                    </script>
+                    <script>
+                        //显示分数
+                        $(".show_number li p").each(function (index, element) {
+                            var num = $(this).attr("tip");
+                            var www = num * 2 * 16;//
+                            $(this).css("width", www);
+                            $(this).parent(".atar_Show").siblings("span").text(num + "分");
+                        });
+                    </script>
+                </div>
+            </div>
+            
+        </div>
+        <input type="hidden" id="hfids" />
+        
+        <input type="hidden" id="hfddid" />
+        <input type="hidden" id="account" />
+
+    <script src="JS/FT_zh.js"></script>
+</body>
+</html>
+

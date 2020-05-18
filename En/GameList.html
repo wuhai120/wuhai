@@ -1,0 +1,143 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width,height=device-height,inital-scale=1.0,maximum-scale=1.0,user-scalable=no;" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>Game betting</title>
+    <link href="../Css/mobilemain.css?v=2020" rel="stylesheet" />
+    <script src="../JS/jquery.js"></script>
+    <script src="../JS/web3.min.js"></script>
+    <script src="../JS/public.js"></script>
+    <script src="../JS/Game.js"></script>
+     <style>
+    .lq{
+        float:right;
+width:40%;
+    margin:0 10px;
+    }
+    .xd{
+        float:left;
+width:40%;
+    margin:0 10px;
+    }
+    </style>
+    <script>
+
+        window.addEventListener('load', function () {
+
+
+            web3.eth.getAccounts(function (err, accounts) {
+                if (accounts.length == 0) {
+                    $("#account").html("请解锁！");
+                } else {
+                    $("#account").html(accounts[0]);
+                    var currentAccount = accounts[0];
+                    var AthenaToken = web3.eth.contract(eschabi).at(eschaddress);
+                    var gameToken = web3.eth.contract(gameabi).at(address);
+
+                    var qs = Request("qs");
+                    xhshow(qs, 0);
+
+
+
+                }
+
+            });
+
+        });
+        function xhshow(qs, order) {
+            var gameToken = web3.eth.contract(gameabi).at(address);
+            if (order < 35) {
+                var lsh = qs * 35 + order;
+
+                //按业务流水号查询(业务流水号){参与地址，投入金额，返还金额}
+                gameToken.cnumtoadd(lsh, function (err, res) {
+                    if (!err) {
+
+                        console.log("cnumtoadd", res);
+                        if (res[1].c > 0) {
+                            var html = "";
+
+                            html += "";
+                            html += "<div class=\"contract_pic\"   id=\"box1-right\">";
+                            // html += "<div class=\"new_pic\"><img src=\"images/new_pro.png\" height=\"35px\"/></div>";
+                            html += "<div class=\"title1\">number：" + order + "</div>";
+                            html += "<div class=\"titleleft\">addresses</div>";
+                            html += "<div class=\"titleright\">" + res[0].substring(0, 8) + "***" + res[0].substring(res[0].length - 5, res[0].length) + "</div>";
+                            html += "<div class=\"titleleft\">amount</div>";
+                            html += "<div class=\"titleright\">" + web3.fromWei(res[1]) + "</div>";
+                            html += "<div class=\"titleleft\">return</div>";
+                            html += "<div class=\"titleright\">";
+                            html += web3.fromWei(res[2]) + "</div>";
+
+                            html += "<div class=\"clear\"></div>";
+                            html += "</div>";
+
+                            $(".contract_box").append(html);
+                            xhshow(qs, order + 1);
+                        }
+                    } else {
+                        console.log(err);
+                    }
+                })
+            }
+            //gameToken.cjqbh(qs, order, function (err, res) {
+            //    if (!err) {
+            //        console.log("cjqbh", res);
+
+
+            //    } else {
+            //        console.log(err);
+            //    }
+            //})
+        }
+    </script>
+</head>
+<body style="background-color: #f2f2f2;">
+  <form id="form1" runat="server">
+        <div class="wrap">
+            <div class="main">
+                <div class="staus_name">
+                    <span><a href="qsList.html">
+                        <img src="../images/jt_left.png" height="20px" /></a></span>Game betting
+                </div>
+                
+                
+                <div class="contract_box">
+                    
+                   
+                   
+                            
+                   
+                    <script type="text/javascript" src="../js/startScore.js"></script>
+                    <script>
+                        scoreFun($("#startone"))
+                        scoreFun($("#starttwo"), {
+                            fen_d: 22,//每一个a的宽度
+                            ScoreGrade: 4//a的个数 10或者
+                        })
+                    </script>
+                    <script>
+                        //显示分数
+                        $(".show_number li p").each(function (index, element) {
+                            var num = $(this).attr("tip");
+                            var www = num * 2 * 16;//
+                            $(this).css("width", www);
+                            $(this).parent(".atar_Show").siblings("span").text(num + "分");
+                        });
+                    </script>
+                </div>
+            </div>
+           
+        </div>
+      <input type="hidden" id="hfids" />
+        
+        <input type="hidden" id="hfddid" />
+        <input type="hidden" id="account" />
+    </form>
+    <script src="../JS/FT_zh.js"></script>
+</body>
+</html>

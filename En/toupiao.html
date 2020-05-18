@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width,height=device-height,inital-scale=1.0,maximum-scale=1.0,user-scalable=no;" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>投票</title>
+    <link href="../Css/mobilemain.css?v=2020" rel="stylesheet" />
+    <script src="../JS/jquery.js"></script>
+    <script src="../JS/web3.min.js"></script>
+    <script src="../JS/public.js"></script>
+    <script src="../JS/Game.js"></script>
+</head>
+<body>
+    <div class="wrap">
+        <div class="main">
+            <div class="staus_name">
+                <span><a href="AddGame.html">
+                    <img src="../images/jt_left.png" height="20px" /></a></span>Vote on the amount of the next game
+                    
+            </div>
+            <div class="toupiaocon">
+                <div class="toupiaotitle">start a vote<i>underway</i></div>
+                <div class="toupiaotxt">Please select the number of ESCH participants</div>
+                <div class="saixuanbtn">
+                    <li>
+                        <input type="radio" name="eschnum" id="eschnum1" checked="checked" value="10esch" onclick="tp(10)" /><label
+                            for="eschnum1"><div class="toupiaonum" id="ps10">0ticket</div><div class="toppiaoesch">10ESCH</div></label>
+                    </li>
+                    <li>
+                        <input type="radio" name="eschnum" id="eschnum2" value="20esch" onclick="tp(20)" /><label for="eschnum2"><div class="toupiaonum" id="ps20">0ticket</div><div class="toppiaoesch">20ESCH</div></label>
+                    </li>
+                    <li>
+                        <input type="radio" name="eschnum" id="eschnum3" value="40esch" onclick="tp(40)" /><label for="eschnum3"><div class="toupiaonum" id="ps40">0ticket</div><div class="toppiaoesch">40ESCH</div></label>
+                    </li>
+                     <li>
+                        <input type="radio" name="eschnum" id="eschnum4" value="60esch" onclick="tp(60)" /><label for="eschnum4"><div class="toupiaonum" id="ps60">0ticket</div><div class="toppiaoesch">60ESCH</div></label>
+                    </li>
+                     <li>
+                        <input type="radio" name="eschnum" id="eschnum5" value="80esch" onclick="tp(80)" /><label for="eschnum5"><div class="toupiaonum" id="ps80">0ticket</div><div class="toppiaoesch">80ESCH</div></label>
+                    </li>
+                     <li>
+                        <input type="radio" name="eschnum" id="eschnum6" value="100esch" onclick="tp(100)" /><label for="eschnum6"><div class="toupiaonum" id="ps100">0ticket</div><div class="toppiaoesch">100ESCH</div></label>
+                    </li>
+                </div>
+            </div>
+
+            <div class="es_hybox1">
+              
+
+                <h2 id="info"></h2>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+
+        var tpToken = web3.eth.contract(tpabi).at(tpadress);
+
+        var gameToken = web3.eth.contract(gameabi).at(address);
+        window.addEventListener('load', function () {
+            web3.eth.getAccounts(function (err, accounts) {
+                if (accounts.length == 0) {
+                    $("#account").html("please unlock！");
+                } else {
+                    $("#account").html(accounts[0]);
+                    //投票情况
+                    tpToken.cxsz2(function (err, res) {
+                        if (!err) {
+                            $("#ps10").html(parseInt(res[0]) + "ticket");
+                            $("#ps20").html(parseInt(res[1]) + "ticket");
+                            $("#ps40").html(parseInt(res[2]) + "ticket");
+                            $("#ps60").html(parseInt(res[3]) + "ticket");
+                            $("#ps80").html(parseInt(res[4]) + "ticket");
+                            $("#ps100").html(parseInt(res[5]) + "ticket");
+                            console.log(res[0] + "-" + res[1] + "-" + res[2] + "-" + res[3] + "-" + res[4] + "-" + res[5]);
+                        } else {
+                            console.log(err);
+                        }
+                    })
+
+                }
+            }
+            )
+        })
+        function tp(num) {
+            var gas = 80000;
+            var gasPrice = 10 * 1000000000
+            tpToken.polls.sendTransaction(num, { gas: gas, gasPrice: gasPrice, from: web3.eth.accounts[0] }, function (err, res) {
+                if (!err) {
+                    alert("send successfully");
+                    console.log("Successful delivery! Waiting for block confirmation...");
+                } else {
+                    alert("User cancelled");
+                    console.log(err);
+                }
+            })
+        }
+    </script>
+</body>
+</html>
